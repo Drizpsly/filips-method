@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Checkout</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --panel: #1a1a1a;
+    --text: #e5e5e5;
+    --muted: #8c8c8c;
+    --radius: 12px;
+    --speed: 160ms;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Lexend", sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 360px;
+    background: var(--panel);
+    padding: 24px;
+    border-radius: var(--radius);
+    border: 1px solid #2a2a2a;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  label {
+    font-size: 12px;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  select, input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: var(--radius);
+    border: 1px solid #2d2d2d;
+    background: #111111;
+    color: var(--text);
+    font-size: 13px;
+    transition: border var(--speed), background var(--speed);
+  }
+
+  input:focus, select:focus {
+    border-color: #555;
+    background: #151515;
+    outline: none;
+  }
+
+  .row {
+    display: flex;
+    gap: 12px;
+  }
+
+  button {
+    width: 100%;
+    margin-top: 18px;
+    padding: 12px;
+    border-radius: var(--radius);
+    border: none;
+    background: #2d2d2d;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background var(--speed), transform var(--speed);
+  }
+
+  button:hover {
+    background: #3a3a3a;
+    transform: translateY(-1px);
+  }
+
+  /* Card logo */
+  .logo-box {
+    width: 50px;
+    height: 32px;
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .logo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: grayscale(1) brightness(0.9);
+  }
+
+  .logo-box.show {
+    opacity: 1;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+  <h1>Checkout</h1>
+
+  <label>Payment Method</label>
+  <select id="method">
+    <option value="">Select method</option>
+    <option>Credit / Debit Card</option>
+  </select>
+
+  <label style="margin-top:16px;">Card Number</label>
+  <input id="card" type="text" maxlength="19" placeholder="0000 0000 0000 0000">
+
+  <div class="logo-box" id="logoBox">
+    <img id="cardLogo" src="" alt="">
+  </div>
+
+  <div class="row" style="margin-top:16px;">
+    <div style="flex:1;">
+      <label>Expiry</label>
+      <input id="exp" type="text" maxlength="5" placeholder="MM/YY">
+    </div>
+    <div style="flex:1;">
+      <label>CVC</label>
+      <input id="cvc" type="password" maxlength="4" placeholder="123">
+    </div>
+  </div>
+
+  <button id="payBtn">Continue</button>
+</div>
+
+<script>
+  const card = document.getElementById("card");
+  const logoBox = document.getElementById("logoBox");
+  const cardLogo = document.getElementById("cardLogo");
+
+  const logos = {
+    visa: "https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png",
+    mastercard: "https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg",
+    amex: "https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo_%282018%29.svg",
+    discover: "https://upload.wikimedia.org/wikipedia/commons/5/5f/Discover_Card_logo.svg"
+  };
+
+  function detectCard(num) {
+    if (/^4/.test(num)) return logos.visa;
+    if (/^5[1-5]/.test(num)) return logos.mastercard;
+    if (/^3[47]/.test(num)) return logos.amex;
+    if (/^6/.test(num)) return logos.discover;
+    return "";
+  }
+
+  card.addEventListener("input", () => {
+    let v = card.value.replace(/[^\d]/g, "").replace(/(.{4})/g, "$1 ").trim();
+    card.value = v;
+
+    const raw = v.replace(/\s/g, "");
+    const logo = detectCard(raw);
+
+    if (logo) {
+      cardLogo.src = logo;
+      logoBox.classList.add("show");
+    } else {
+      logoBox.classList.remove("show");
+    }
+  });
+
+  document.getElementById("payBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+  });
+</script>
+
+</body>
+</html>
